@@ -2,8 +2,6 @@ package com.CourseWork.CourseWorkForOOP;
 
 import java.time.LocalTime;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Scanner;
 
 public class ArrivedTruck {
 
@@ -37,26 +35,14 @@ public class ArrivedTruck {
 
     }
 
-    boolean isArrivedFromInitiated(){
-        if(arrivedFrom.equals("")){
-            return false;
-        } else {
-            return true;
-        }
+    boolean isArrivedFromEmpty(){
+        return arrivedFrom.isEmpty();
     }
-    boolean isTruckNumberInitiated(){
-        if(truckNumber.equals("")){
-            return false;
-        } else {
-            return true;
-        }
+    boolean isTruckNumberEmpty(){
+        return truckNumber.isEmpty();
     }
-    boolean isWeightOfTruckInitiated(){
-        if(weightOfTruck==0){
-            return false;
-        } else {
-            return true;
-        }
+    boolean isWeightOfTruckEmpty(){
+        return weightOfTruck != 0;
     }
     public String getTruckNumber() {
         return truckNumber;
@@ -69,11 +55,20 @@ public class ArrivedTruck {
     public LocalTime getArrivalTime() {
         return arrivalTime;
     }
+    public LocalTime setArrivalTime(int hour,int minute,int second,int nanoOfSeconds){
+        return LocalTime.of(hour,minute,second,nanoOfSeconds);
+    }
+    public LocalTime setArrivalTime(int hour,int minute,int second){
+        return LocalTime.of(hour,minute,second);
+    }
+
 
     public LocalDate getArrivalDate() {
         return arrivalDate;
     }
-
+    public LocalDate setArrivalDate(int year,int month,int dayOfMonth) {
+        return LocalDate.of(year,month,dayOfMonth);
+    }
     public String getArrivedFrom() {
         return arrivedFrom;
     }

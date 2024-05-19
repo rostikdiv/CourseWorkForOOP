@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class ListOfArrivedTrucks {
     ArrayList<ArrivedTruck> arrivedTrucks=new ArrayList<>();
+    
 
     void show(){
         for (int i=0;i<arrivedTrucks.size();i++){

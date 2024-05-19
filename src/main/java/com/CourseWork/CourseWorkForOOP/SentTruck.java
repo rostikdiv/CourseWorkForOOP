@@ -2,7 +2,7 @@ package com.CourseWork.CourseWorkForOOP;
 
 import java.time.LocalTime;
 import java.time.LocalDate;
-import java.util.Scanner;
+
 public class SentTruck {
     private String truckNumber;
     private final LocalTime sentTime;
@@ -34,26 +34,14 @@ public class SentTruck {
 
     }
 
-    boolean isSentToInitiated(){
-        if(sentTo.equals("")){
-            return false;
-        } else {
-            return true;
-        }
+    boolean isSentToEmpty(){
+        return sentTo.isEmpty();
     }
-    boolean isTruckNumberInitiated(){
-        if(truckNumber.equals("")){
-            return false;
-        } else {
-            return true;
-        }
+    boolean isTruckNumberEmpty(){
+        return truckNumber.isEmpty();
     }
-    boolean isWeightOfTruckInitiated(){
-        if(weightOfTruck==0){
-            return false;
-        } else {
-            return true;
-        }
+    boolean isWeightOfTruckEmpty(){
+        return weightOfTruck != 0;
     }
 
     public String getTruckNumber() {

@@ -6,8 +6,8 @@ public class ListOfSentTrucks {
     ArrayList<SentTruck> sentTrucks=new ArrayList<>();
 
     void show(){
-        for (int i=0;i<sentTrucks.size();i++){
-            sentTrucks.get(i).show();
+        for (SentTruck sentTruck : sentTrucks) {
+            sentTruck.show();
         }
     }
     void add(SentTruck sentTruck){
