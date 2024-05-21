@@ -2,6 +2,7 @@ package com.CourseWork.CourseWorkForOOP;
 
 import java.time.LocalTime;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 public class ArrivedTruck {
 
@@ -23,7 +24,7 @@ public class ArrivedTruck {
         truckNumber = "";
         arrivedFrom = "";
         weightOfTruck = 0;
-        arrivalTime=LocalTime.now();
+        arrivalTime=LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
         arrivalDate=LocalDate.now();
     }
 

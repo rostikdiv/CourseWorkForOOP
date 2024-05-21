@@ -3,41 +3,47 @@ package com.CourseWork.CourseWorkForOOP;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import javax.swing.*;
 import java.io.*;
 
 public class WorkWithExel {
-    static String nameOfWorkBookToArrivedTruck="";
-    static String nameOfSheetToArrivedTruck="";
-    static String nameOfWorkBookToSentTruck="";
-    static String nameOfSheetToSentTruck="";
-    static String createWorkBook(String nameOfWorkBook) {
+    private static String nameOfWorkBookToArrivedTruck="";
+    private static String nameOfSheetToArrivedTruck="";
+    private static String nameOfWorkBookToSentTruck="";
+    private static String nameOfSheetToSentTruck="";
+
+    // if workbook was created return true else false
+    static Boolean createWorkBook(String nameOfWorkBook) {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Sheet1");
         try (FileOutputStream fileOutputStream = new FileOutputStream(nameOfWorkBook+".xlsx")) {
             workbook.write(fileOutputStream);
             System.out.println("Excel file " + nameOfWorkBook + " created ");
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return nameOfWorkBook;
+        return false;
     }
+    static void createSheet(String nameOfSheet,String nameOfWorkBook) throws FileNotFoundException,IllegalArgumentException {
+        if (WorkWithExel.workBookIsExist(nameOfWorkBook)) {
+            try {
+                FileInputStream fileInputStream = new FileInputStream(nameOfWorkBook + ".xlsx");
 
-    static void createSheet(String nameOfSheet,String nameOfWorkBook) throws FileNotFoundException {
-        System.out.println("name of work book "+nameOfWorkBook);
-         try{
-             FileInputStream fileInputStream=new FileInputStream(nameOfWorkBook+".xlsx");
-
-             Workbook workbook=WorkbookFactory.create(fileInputStream);
-             Sheet newSheet= workbook.createSheet(nameOfSheet);
-             try(FileOutputStream fileOutputStream =new FileOutputStream(nameOfWorkBook+".xlsx")){
-                 workbook.write(fileOutputStream);
-                 System.out.println("New sheet " + nameOfSheet + " created in Excel file " + nameOfWorkBook + " ");
-             }
-         } catch (FileNotFoundException e){
-             throw e;
-         } catch (IOException c){
-             c.printStackTrace();
-         }
+                Workbook workbook = WorkbookFactory.create(fileInputStream);
+                Sheet newSheet = workbook.createSheet(nameOfSheet);
+                try (FileOutputStream fileOutputStream = new FileOutputStream(nameOfWorkBook + ".xlsx")) {
+                    workbook.write(fileOutputStream);
+                    System.out.println("New sheet " + nameOfSheet + " created in Excel file " + nameOfWorkBook + " ");
+                }
+            } catch (FileNotFoundException e) {
+                throw e;
+            } catch (IllegalArgumentException l) {
+                throw l;
+            } catch (IOException c){
+                c.printStackTrace();
+            }
+        }
 
     }
      static boolean isSheetEmpty(String nameOfWorkBook,String nameOfSheet){
@@ -57,6 +63,7 @@ public class WorkWithExel {
              FileInputStream fileInput = new FileInputStream(nameOfWorkBook+".xlsx");
              Workbook workbook= WorkbookFactory.create(fileInput);
              Sheet sheet=workbook.getSheet(nameOfSheet);
+             System.out.println("last row number "+sheet.getLastRowNum()+"in sheet "+nameOfSheet);
              return sheet.getLastRowNum();
          } catch (IOException e){
              e.printStackTrace();
@@ -74,7 +81,6 @@ public class WorkWithExel {
     }
 
     static void addDataToSheet(String[][] data, Sheet sheet, int rowNum){
-
         for (String[] rowValues : data) {
             Row row = sheet.createRow(rowNum++);
             int colNum = 0;
@@ -85,7 +91,8 @@ public class WorkWithExel {
         }
     }
 
-     static void addData(ArrivedTruck arrivedTruck){
+    //if truck added return true else false
+     static Boolean addData(ArrivedTruck arrivedTruck){
          try{
              FileInputStream fileInput = new FileInputStream(nameOfWorkBookToArrivedTruck+".xlsx");
              Workbook workbook= WorkbookFactory.create(fileInput);
@@ -104,14 +111,21 @@ public class WorkWithExel {
                              ,String.valueOf(arrivedTruck.getArrivalTime())}};
              addDataToSheet(data,sheet,(getLastRowNumber(nameOfWorkBookToArrivedTruck,nameOfSheetToArrivedTruck))+1);
              saveWorkbook(workbook,nameOfWorkBookToArrivedTruck);
-
-
+             System.out.println("arrived truck was added "+
+                     "Number of truck "+arrivedTruck.getTruckNumber()+
+                     "\nweight of truck "+arrivedTruck.getWeightOfTruck()+
+                     "\nTruck came from "+arrivedTruck.getArrivedFrom()+
+                     "\nArrival date "+ arrivedTruck.getArrivalDate()+
+                     "\nArrival time "+arrivedTruck.getArrivalTime());
+             return true;
 
          } catch (IOException e){
              e.printStackTrace();
          }
+         return false;
      }
-    static void addData(SentTruck sentTruck){
+    //if truck added return true else false
+    static Boolean addData(SentTruck sentTruck){
         try{
             FileInputStream fileInput = new FileInputStream(nameOfWorkBookToSentTruck+".xlsx");
             Workbook workbook= WorkbookFactory.create(fileInput);
@@ -131,13 +145,21 @@ public class WorkWithExel {
 
             saveWorkbook(workbook,nameOfWorkBookToSentTruck);
 
-
+            System.out.println("sent truck was added"+
+                    "Number of truck "+sentTruck.getTruckNumber()+
+                    "\nweight of truck "+sentTruck.getWeightOfTruck()+
+                    "\nTruck sent to "+sentTruck.getSentTo()+
+                    "\nArrival date "+ sentTruck.getSentDate()+
+                    "\nArrival time "+sentTruck.getSentTime());
+            return true;
         } catch (IOException e){
             e.printStackTrace();
         }
+        return false;
     }
     static boolean workBookIsExist(String nameOfWorkBook){
         File file =new File(nameOfWorkBook+".xlsx");
+        System.out.println("the workbook "+nameOfWorkBook+" is exist");
         return file.exists();
     }
 
@@ -146,8 +168,11 @@ public class WorkWithExel {
             try{
                 FileInputStream fileInputStream=new FileInputStream(nameOfWorkBook+".xlsx");
                 Workbook workbook= WorkbookFactory.create(fileInputStream);
-                return workbook.getSheetIndex(nameOfSheet) !=-1;
 
+                if (workbook.getSheetIndex(nameOfSheet) !=-1){
+                    System.out.println("sheet "+nameOfSheet+" in workbook "+nameOfWorkBook+" is exist");
+                    return true;
+                }
             }catch (IOException e){
                 e.printStackTrace();
             }
@@ -164,6 +189,7 @@ public class WorkWithExel {
                 Sheet sheet=workbook.getSheet(nameOfSheet);
                 Row row=sheet.getRow(rowNum);
                 if (row!=null){
+                    System.out.println("the row number"+rowNum+"in sheet "+nameOfSheet+" in workbook "+nameOfWorkBook+" is exist");
                     return true;
                 }
             }catch (IOException e){
@@ -180,6 +206,8 @@ public class WorkWithExel {
             Cell cell=row.getCell(cellNumber);
 
             if (cell!=null){
+                System.out.println("the cell number "+cellNumber+"in row"+rowNumber+"in sheet "
+                        +nameOfSheet+" in workbook "+nameOfWorkBook+" is exist");
                 return true;
             }
 
@@ -188,14 +216,21 @@ public class WorkWithExel {
         }
         return false;
     }
+    //if workbook deleted return true else false
     public static Boolean deleteWorkbook(String nameOfWorkBook){
         if (workBookIsExist(nameOfWorkBook)){
 
             File file=new File(nameOfWorkBook+".xlsx");
-            return file.delete();
+            if (file.delete()){
+                System.out.println("workbook "+nameOfWorkBook+" deleted");
+                return true;
+            } else {
+                System.out.println("workbook " + nameOfWorkBook + " not deleted");
+            }
         }
         return false;
     }
+    //if sheet deleted return true else false
     public static Boolean deleteSheet(String nameOfWorkBook,String nameOfSheet){
         if (sheetIsExist(nameOfWorkBook,nameOfSheet)){
             try{
@@ -204,6 +239,7 @@ public class WorkWithExel {
                 int index =workbook.getSheetIndex(nameOfSheet);
                 workbook.removeSheetAt(index);
                 saveWorkbook(workbook,nameOfWorkBook);
+                System.out.println("sheet "+nameOfSheet+" in workbook"+nameOfWorkBook+" deleted");
                 return true;
 
 
@@ -215,13 +251,12 @@ public class WorkWithExel {
             return false;
         }
     }
+    //if row deleted return true else false
     public static Boolean deleteRow(String nameOfWorkBook, String nameOfSheet, int rowNum) {
         try {
             FileInputStream fileInputStream = new FileInputStream(nameOfWorkBook + ".xlsx");
             Workbook workbook = WorkbookFactory.create(fileInputStream);
             Sheet sheet = workbook.getSheet(nameOfSheet);
-
-
 
             if (rowNum < 0 || rowNum > sheet.getLastRowNum()) {
                 return false;
@@ -277,12 +312,15 @@ public class WorkWithExel {
 
             workbook.close();
             fileInputStream.close();
+            System.out.println("row "+rowNum+" in sheet "+nameOfSheet+" in workbook "+nameOfWorkBook+" deleted");
             return true;
+
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
     }
+    //if history created return true else false
     public static boolean getHistoryOfTruck(String nameOfWorkBookForHistory,String nameOfSheetForHistory,String truckNumber){
         try{
             boolean iterate=true;
@@ -307,11 +345,9 @@ public class WorkWithExel {
                     {"Number of truck","weight of truck ","Truck came from","truck sent to","date","time"}};
             addDataToSheet(data,sheetHistory,0);
 
-
             while(iterate){
                 iterate=false;
                 for(;arrivedSheetIndex<sheetArrived.getLastRowNum()+1;){
-                    System.out.println("arrivedSheetIndex "+arrivedSheetIndex);
                     Row row=sheetArrived.getRow(arrivedSheetIndex++);
                     Cell cell=row.getCell(0);
                     if (cell.getStringCellValue().equals(truckNumber)){
@@ -330,7 +366,6 @@ public class WorkWithExel {
                 }
 
                 for(;sentSheetIndex<sheetSent.getLastRowNum()+1;){
-                    System.out.println("sentSheetIndex "+sentSheetIndex);
                     Row row=sheetSent.getRow(sentSheetIndex++);
                     Cell cell=row.getCell(0);
                     if (cell.getStringCellValue().equals(truckNumber)){
@@ -347,11 +382,11 @@ public class WorkWithExel {
                     }
 
                 }
-                System.out.println("---------While");
 
             }
 
             saveWorkbook(workbookHistory,nameOfWorkBookForHistory);
+            System.out.println("history created in sheet "+nameOfSheetForHistory+" in workbook "+nameOfWorkBookForHistory);
             return true;
 
         }catch (IOException e){
@@ -360,12 +395,15 @@ public class WorkWithExel {
         }
         return false;
     }
+
+    //if sheet renamed return true else false
     public static boolean renameSheet(String nameOfWorkBook, String nameOfSheet, String newNameOfSheet) {
         try {
             FileInputStream fileInputStream = new FileInputStream(nameOfWorkBook + ".xlsx");
 
             Workbook workbook = WorkbookFactory.create(fileInputStream);
             int sheetIndex = workbook.getSheetIndex(nameOfSheet);
+
 
             if (sheetIndex != -1) {
                 workbook.setSheetName(sheetIndex, newNameOfSheet);
@@ -382,8 +420,36 @@ public class WorkWithExel {
         }
     }
 
+    public static String getNameOfWorkBookToArrivedTruck() {
+        return nameOfWorkBookToArrivedTruck;
+    }
 
+    public static void setNameOfWorkBookToArrivedTruck(String nameOfWorkBookToArrivedTruck) {
+        WorkWithExel.nameOfWorkBookToArrivedTruck = nameOfWorkBookToArrivedTruck;
+    }
 
+    public static String getNameOfSheetToArrivedTruck() {
+        return nameOfSheetToArrivedTruck;
+    }
 
+    public static void setNameOfSheetToArrivedTruck(String nameOfSheetToArrivedTruck) {
+        WorkWithExel.nameOfSheetToArrivedTruck = nameOfSheetToArrivedTruck;
+    }
+
+    public static String getNameOfWorkBookToSentTruck() {
+        return nameOfWorkBookToSentTruck;
+    }
+
+    public static void setNameOfWorkBookToSentTruck(String nameOfWorkBookToSentTruck) {
+        WorkWithExel.nameOfWorkBookToSentTruck = nameOfWorkBookToSentTruck;
+    }
+
+    public static String getNameOfSheetToSentTruck() {
+        return nameOfSheetToSentTruck;
+    }
+
+    public static void setNameOfSheetToSentTruck(String nameOfSheetToSentTruck) {
+        WorkWithExel.nameOfSheetToSentTruck = nameOfSheetToSentTruck;
+    }
 }
 

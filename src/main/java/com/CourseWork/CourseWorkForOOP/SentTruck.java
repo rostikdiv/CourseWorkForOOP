@@ -2,6 +2,7 @@ package com.CourseWork.CourseWorkForOOP;
 
 import java.time.LocalTime;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 public class SentTruck {
     private String truckNumber;
@@ -22,7 +23,7 @@ public class SentTruck {
         this.truckNumber = "";
         this.sentTo = "";
         this.weightOfTruck = 0;
-        sentTime=LocalTime.now();
+        sentTime=LocalTime.now().truncatedTo(ChronoUnit.SECONDS);
         sentDate=LocalDate.now();
     }
 
